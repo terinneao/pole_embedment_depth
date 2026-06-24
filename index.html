@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pole Embedment Depth Calculator — IBC 2021 (SI)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div class="wrap">
+      <h1>Pole / Post Embedment Depth</h1>
+      <p class="subtitle">Lateral load embedment per <strong>IBC 2021 §1807.3</strong> &mdash; SI units</p>
+    </div>
+  </header>
+
+  <main class="wrap layout">
+    <!-- ============ INPUT PANEL ============ -->
+    <section class="card" aria-label="Inputs">
+      <h2>Inputs</h2>
+
+      <div class="field">
+        <label>Embedment condition</label>
+        <div class="seg">
+          <label class="seg-item">
+            <input type="radio" name="condition" value="nonconstrained" checked />
+            <span>Non&#8209;constrained</span>
+          </label>
+          <label class="seg-item">
+            <input type="radio" name="condition" value="constrained" />
+            <span>Constrained</span>
+          </label>
+        </div>
+        <p class="hint" id="condHint">No lateral restraint at the ground surface (free top). Eq. 18&#8209;1 / 18&#8209;2.</p>
+      </div>
+
+      <div class="field">
+        <label for="P">Applied lateral force, <em>P</em></label>
+        <div class="input-row">
+          <input type="number" id="P" value="10" min="0" step="any" />
+          <span class="unit">kN</span>
+        </div>
+        <p class="hint">Horizontal (lateral) design force at the point of application.</p>
+      </div>
+
+      <div class="field">
+        <label for="h">Load height above grade, <em>h</em></label>
+        <div class="input-row">
+          <input type="number" id="h" value="2.5" min="0" step="any" />
+          <span class="unit">m</span>
+        </div>
+        <p class="hint">Distance from ground surface to the point where <em>P</em> is applied.</p>
+      </div>
+
+      <div class="field">
+        <label for="b">Post width / diameter, <em>b</em></label>
+        <div class="input-row">
+          <input type="number" id="b" value="0.30" min="0" step="any" />
+          <span class="unit">m</span>
+        </div>
+        <p class="hint">Diameter of a round post, or the diagonal of a square post/footing.</p>
+      </div>
+
+      <div class="field">
+        <label for="soil">Soil class (Table 1806.2)</label>
+        <select id="soil">
+          <option value="188.5">Massive crystalline bedrock (1200 psf/ft)</option>
+          <option value="62.8">Sedimentary &amp; foliated rock (400 psf/ft)</option>
+          <option value="31.4">Sandy gravel / gravel — GW, GP (200 psf/ft)</option>
+          <option value="23.6" selected>Sand, silty/clayey sand &amp; gravel — SW,SP,SM,SC,GM,GC (150 psf/ft)</option>
+          <option value="15.7">Clay, sandy/silty clay, silt — CL,ML,MH,CH (100 psf/ft)</option>
+          <option value="custom">Custom value…</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="S">Allowable lateral bearing, <em>S</em></label>
+        <div class="input-row">
+          <input type="number" id="S" value="23.6" min="0" step="any" />
+          <span class="unit">kPa / m</span>
+        </div>
+        <p class="hint">Allowable lateral soil&#8209;bearing pressure <em>per metre of depth</em> (= kN/m³).</p>
+      </div>
+
+      <div class="field checks">
+        <label class="check">
+          <input type="checkbox" id="isolated" />
+          <span>Isolated pole — double lateral bearing (§1806.3.4)</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="cap12" checked />
+          <span>Limit bearing depth to 3.66&nbsp;m (12&nbsp;ft) max</span>
+        </label>
+      </div>
+
+      <button id="calcBtn" class="btn">Calculate</button>
+    </section>
+
+    <!-- ============ RESULT PANEL ============ -->
+    <section class="card result-card" aria-label="Results">
+      <h2>Result</h2>
+      <div class="result-main">
+        <div class="result-value">
+          <span id="depthOut">—</span><span class="result-unit">m</span>
+        </div>
+        <div class="result-label">Required embedment depth, <em>d</em></div>
+      </div>
+
+      <div id="warnBox" class="warn hidden"></div>
+
+      <table class="detail-table">
+        <tbody id="detailBody">
+          <tr><td>Run a calculation to see details.</td><td></td></tr>
+        </tbody>
+      </table>
+
+      <details class="formula">
+        <summary>Formulas &amp; method</summary>
+        <div class="formula-body">
+          <p><strong>Non&#8209;constrained</strong> (IBC Eq.&nbsp;18&#8209;1, 18&#8209;2):</p>
+          <p class="eq">d = 0.5·A·[1 + √(1 + 4.36·h / A)]</p>
+          <p class="eq">A = 2.34·P / (S₁·b)</p>
+          <p>where S₁ is the allowable lateral bearing at ⅓ of the embedment depth, so the solution is found by iteration.</p>
+          <p><strong>Constrained</strong> (IBC Eq.&nbsp;18&#8209;3):</p>
+          <p class="eq">d = √(4.25·P·h / (S₃·b))</p>
+          <p>where S₃ is the allowable lateral bearing at the full embedment depth.</p>
+          <p class="note">Inputs are converted to US&#8209;customary units, the code equations are applied,
+          and the result is converted back to metres. Conversions: 1&nbsp;m = 3.28084&nbsp;ft,
+          1&nbsp;kN = 224.809&nbsp;lb, 1&nbsp;kN/m³ = 6.366&nbsp;psf/ft.</p>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="app-footer wrap">
+    <p>For preliminary design only. Verify against IBC 2021 §1806/§1807 and project geotechnical data.
+    Embedment for round/square posts; the deflection basis is 12&nbsp;mm (0.5&nbsp;in) at grade.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
