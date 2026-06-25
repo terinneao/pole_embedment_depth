@@ -8,6 +8,13 @@ metric (SI) inputs and outputs.
 
 No build step or server is required — just open `index.html` in a browser.
 
+Optionally serve it locally:
+
+```bash
+python -m http.server 8000
+# then open http://localhost:8000
+```
+
 ## What it does
 
 Given the lateral force, its height above grade, the post size and the soil's
