@@ -1,4 +1,4 @@
-# Pole / Post Embedment Depth Calculator — IBC 2021 (SI)
+# Pole Embedment Depth Calculator — IBC 2021 (SI)
 
 A single-page web app that computes the required embedment depth of a pole or
 post subjected to a lateral load, following **IBC 2021 Section 1807.3**, with
@@ -7,13 +7,6 @@ metric (SI) inputs and outputs.
 ## Run it
 
 No build step or server is required — just open `index.html` in a browser.
-
-Optionally serve it locally:
-
-```bash
-python -m http.server 8000
-# then open http://localhost:8000
-```
 
 ## What it does
 
